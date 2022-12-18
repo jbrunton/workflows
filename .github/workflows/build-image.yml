@@ -4,35 +4,52 @@ on:
   workflow_call:
     inputs:
       repo-name:
+        description: The name of the Docker repo
         required: true
         type: string
       tag:
+        description: If no tag is given, it defaults to a name based on the branch and git sha (e.g. `my-branch-a1b2c3d`)
         required: false
         type: string
       working-directory:
+        description: The directory from which to run the build
         required: false
         type: string
       publish:
+        description: Whether to publish the image to the repository. Defaults to `false`
         required: false
         type: boolean
         default: false
-    secrets:
       docker-username:
+        description: The username to sign into the Docker registry with
         required: false
+        type: string
+    secrets:
       docker-access-token:
+        description: The access token to sign into the Docker registry with
         required: false
+    outputs:
+      tag:
+        description: "The tag for the image"
+        value: ${{ jobs.build.outputs.tag }}
+      image_name:
+        description: "The full image name (including the tag)"
+        value: ${{ jobs.build.outputs.image_name }}
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.build-image.outputs.tag }}
+      image_name: ${{ steps.build-image.outputs.image_name }}
     steps:
       - uses: actions/checkout@v3
       - name: Docker Login
         run: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
         env:
-          DOCKER_USERNAME: ${{ secrets.docker-username }}
           DOCKER_ACCESS_TOKEN: ${{ secrets.docker-access-token }}
+          DOCKER_USERNAME: ${{ inputs.docker-username }}
       - uses: buildpacks/github-actions/setup-pack@v4.9.0
       - name: Build Image
         id: build-image
@@ -55,4 +72,3 @@ jobs:
         run: docker push $IMAGE_NAME
         env:
           IMAGE_NAME: ${{ steps.build-image.outputs.image_name }}
-

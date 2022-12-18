@@ -1,0 +1,35 @@
+name: test
+
+on:
+  push:
+
+jobs:
+
+  run-build-image:
+    uses: ./.github/workflows/build-image.yml
+    with:
+      repo-name: jbrunton/workflows-test-server
+      working-directory: test-server
+      publish: true
+      docker-username: jbrunton
+    secrets:
+      docker-access-token: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+  verify-build-image:
+    needs: run-build-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify output
+        env:
+          TAG: ${{ needs.run-build-image.outputs.tag }}
+        run: |
+          echo "image name: jbrunton/workflows-test-server:$TAG"
+          docker run -p 3000:3000 jbrunton/workflows-test-server:$TAG &
+          npx wait-on http://localhost:3000
+          RESPONSE=$(curl http://localhost:3000)
+          if [ "$RESPONSE" = "Hello, World!" ]; then
+            echo "Received expected output from test-server"
+          else
+            echo "Received unexpected server response: $RESPONSE"
+            exit 1
+          fi
