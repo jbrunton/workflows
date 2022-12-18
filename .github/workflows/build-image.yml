@@ -7,6 +7,10 @@ on:
         description: The name of the Docker repo
         required: true
         type: string
+      buildpack:
+        description: The buildpack to use
+        required: true
+        type: string
       tag:
         description: If no tag is given, it defaults to a name based on the branch and git sha (e.g. `my-branch-a1b2c3d`)
         required: false
@@ -59,7 +63,12 @@ jobs:
           TAG=${TAG:-"$GIT_BRANCH-$GIT_COMMIT"}
           IMAGE_NAME=$REPO_NAME:$TAG
 
-          pack build $IMAGE_NAME --builder paketobuildpacks/builder:base
+          pack build $IMAGE_NAME \
+            --builder paketobuildpacks/builder:base \
+            --buildpack $BUILDPACK \
+            --buildpack paketo-buildpacks/image-labels \
+            --env BP_OCI_REVISION=$GIT_COMMIT \
+            --env BP_OCI_VERSION=$GIT_BRANCH
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
@@ -67,6 +76,7 @@ jobs:
         env:
           REPO_NAME: ${{ inputs.repo-name }}
           TAG: ${{ inputs.tag }}
+          BUILDPACK: ${{ inputs.buildpack }}
       - name: Publish
         if: ${{ inputs.publish }}
         run: docker push $IMAGE_NAME

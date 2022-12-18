@@ -9,6 +9,7 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     with:
       repo-name: jbrunton/workflows-test-server
+      buildpack: paketo-buildpacks/nodejs
       working-directory: test-server
       publish: true
       docker-username: jbrunton
@@ -26,7 +27,9 @@ jobs:
           echo "image name: jbrunton/workflows-test-server:$TAG"
           docker run -p 3000:3000 jbrunton/workflows-test-server:$TAG &
           npx wait-on http://localhost:3000
+
           RESPONSE=$(curl http://localhost:3000)
+          
           if [ "$RESPONSE" = "Hello, World!" ]; then
             echo "Received expected output from test-server"
           else
