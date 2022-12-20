@@ -13,6 +13,7 @@ jobs:
       working-directory: test-server
       publish: true
       docker-username: jbrunton
+      cache-image: jbrunton/workflows-test-server-cache-image:latest
     secrets:
       docker-access-token: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 

@@ -28,6 +28,10 @@ on:
         description: The username to sign into the Docker registry with
         required: false
         type: string
+      cache-image:
+        description: A remote cache image to use
+        required: false
+        type: string
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
@@ -63,12 +67,23 @@ jobs:
           TAG=${TAG:-"$GIT_BRANCH-$GIT_COMMIT"}
           IMAGE_NAME=$REPO_NAME:$TAG
 
-          pack build $IMAGE_NAME \
-            --builder paketobuildpacks/builder:base \
-            --buildpack $BUILDPACK \
-            --buildpack paketo-buildpacks/image-labels \
-            --env BP_OCI_REVISION=$GIT_COMMIT \
+          args=(
+            --builder paketobuildpacks/builder:base
+            --buildpack $BUILDPACK
+            --buildpack paketo-buildpacks/image-labels
+            --env BP_OCI_REVISION=$GIT_COMMIT
             --env BP_OCI_VERSION=$GIT_BRANCH
+          )
+
+          if [[ $PUBLISH == 'true' ]]; then
+            if [[ -n $CACHE_IMAGE ]]; then
+              pack config trusted-builders add $BUILDPACK
+              args+=(--cache-image $CACHE_IMAGE)
+            fi
+            args+=(--publish)
+          fi
+
+          pack build $IMAGE_NAME "${args[@]}" --publish
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
@@ -77,8 +92,5 @@ jobs:
           REPO_NAME: ${{ inputs.repo-name }}
           TAG: ${{ inputs.tag }}
           BUILDPACK: ${{ inputs.buildpack }}
-      - name: Publish
-        if: ${{ inputs.publish }}
-        run: docker push $IMAGE_NAME
-        env:
-          IMAGE_NAME: ${{ steps.build-image.outputs.image_name }}
+          CACHE_IMAGE: ${{ inputs.cache-image }}
+          PUBLISH: ${{ inputs.publish }}
