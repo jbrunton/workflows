@@ -24,6 +24,8 @@ jobs:
       - name: Verify output
         env:
           TAG: ${{ needs.run-build-image.outputs.tag }}
+          IMAGE_NAME: ${{ needs.run-build-image.outputs.image_name }}
+          DIGEST: ${{ needs.run-build-image.outputs.digest }}
         run: |
           echo "image name: jbrunton/workflows-test-server:$TAG"
           docker run -p 3000:3000 jbrunton/workflows-test-server:$TAG &
@@ -37,3 +39,19 @@ jobs:
             echo "Received unexpected server response: $RESPONSE"
             exit 1
           fi
+
+          if [[ -z $DIGEST ]]; then
+            echo "Expected repo digest"
+            exit 1
+          else
+            echo "Received repo digest: $DIGEST"
+          fi
+          
+          if [[ -z $IMAGE_NAME ]]; then
+            echo "Expected image name"
+            exit 1
+          else
+            echo "Received name for image: $IMAGE_NAME"
+          fi
+
+          
