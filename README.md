@@ -15,6 +15,7 @@ jobs:
     uses: jbrunton/workflows/.github/workflows/build-image.yml@develop
     with:
       repo-name: jbrunton/my-image
+      buildpack: paketo-buildpacks/nodejs
       working-directory: api
       publish: true
       docker-username: jbrunton
