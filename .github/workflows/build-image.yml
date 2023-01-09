@@ -83,7 +83,7 @@ jobs:
             args+=(--publish)
           fi
 
-          pack build $IMAGE_NAME "${args[@]}" --publish
+          pack build $IMAGE_NAME "${args[@]}"
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
