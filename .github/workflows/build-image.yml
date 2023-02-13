@@ -70,7 +70,7 @@ jobs:
           args=(
             --builder paketobuildpacks/builder:base
             --buildpack $BUILDPACK
-            --buildpack paketo-buildpacks/image-labels
+            --buildpack gcr.io/paketo-buildpacks/image-labels
             --env BP_OCI_REVISION=$GIT_COMMIT
             --env BP_OCI_VERSION=$GIT_BRANCH
           )
