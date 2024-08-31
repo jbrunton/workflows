@@ -68,7 +68,7 @@ jobs:
           IMAGE_NAME=$REPO_NAME:$TAG
 
           args=(
-            --builder paketobuildpacks/builder:base
+            --builder paketobuildpacks/builder-jammy-base
             --buildpack $BUILDPACK
             --buildpack gcr.io/paketo-buildpacks/image-labels
             --env BP_OCI_REVISION=$GIT_COMMIT
