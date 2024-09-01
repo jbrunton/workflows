@@ -40,6 +40,10 @@ on:
         description: A remote cache image to use
         required: false
         type: string
+      node-version-file:
+        description: If you wish to pin a node version, the file it's specified in.
+        required: false
+        type: string
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
@@ -63,7 +67,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json"
+          node-version-file: ${{ inputs.node-version-file }}
       - uses: pnpm/action-setup@v4
       - name: Docker Login
         run: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
