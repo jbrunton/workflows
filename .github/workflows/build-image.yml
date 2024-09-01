@@ -86,9 +86,6 @@ jobs:
 
           args=(
             --builder gcr.io/buildpacks/builder
-            --buildpack gcr.io/paketo-buildpacks/image-labels
-            --env BP_OCI_REVISION=$GIT_COMMIT
-            --env BP_OCI_VERSION=$GIT_BRANCH
           )
 
           if [[ $PUBLISH == 'true' ]]; then
