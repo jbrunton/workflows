@@ -61,6 +61,9 @@ jobs:
       image_name: ${{ steps.build-image.outputs.image_name }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
       - uses: pnpm/action-setup@v4
       - name: Docker Login
         run: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
