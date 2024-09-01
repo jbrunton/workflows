@@ -16,7 +16,15 @@ on:
         required: false
         type: string
       working-directory:
-        description: The directory from which to run the build
+        description: The directory from which to run prepare commands. Also used as the build directory unless `build-directory` is also specified.
+        required: false
+        type: string
+      build-directory:
+        description: The directory to run the build from. Defaults to `working-directory` if not defined.
+        required: false
+        type: string
+      prepare-cmd:
+        description: Command to run before invoking the build. Run from `working-directory`.
         required: false
         type: string
       publish:
@@ -59,6 +67,9 @@ jobs:
           DOCKER_ACCESS_TOKEN: ${{ secrets.docker-access-token }}
           DOCKER_USERNAME: ${{ inputs.docker-username }}
       - uses: buildpacks/github-actions/setup-pack@v4.9.0
+      - name: Prepare Build
+        run: ${{ inputs.prepare-cmd }}
+        working-directory: ${{ inputs.working-directory }}
       - name: Build Image
         id: build-image
         run: |
@@ -87,7 +98,7 @@ jobs:
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
-        working-directory: ${{ inputs.working-directory }}
+        working-directory: ${{ inputs.build-directory || inputs.working-directory }}
         env:
           REPO_NAME: ${{ inputs.repo-name }}
           TAG: ${{ inputs.tag }}
