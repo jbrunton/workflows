@@ -66,9 +66,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
+        if: ${{ inputs.node-version-file }}
         with:
           node-version-file: ${{ inputs.node-version-file }}
       - uses: pnpm/action-setup@v4
+        if: ${{ inputs.node-version-file }}
       - name: Docker Login
         run: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
         env:
