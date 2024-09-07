@@ -23,7 +23,7 @@ jobs:
       docker-access-token: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 ```
 
-See the [workflow definition](https://github.com/jbrunton/workflows/blob/develop/.github/workflows/build-image.yml) for more details on the inputs and outputs.
+See the [workflow definition](https://github.com/jbrunton/workflows/blob/main/.github/workflows/build-image.yml) for more details on the inputs and outputs.
 
 ## tag-release
 
@@ -41,4 +41,4 @@ jobs:
       user-email: ci-user@example.com
 ```
 
-See the [workflow definition](https://github.com/jbrunton/workflows/blob/develop/.github/workflows/tag-release.yml) for more details on the inputs and outputs.
+See the [workflow definition](https://github.com/jbrunton/workflows/blob/main/.github/workflows/tag-release.yml) for more details on the inputs and outputs.
