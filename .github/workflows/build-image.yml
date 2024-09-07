@@ -60,7 +60,7 @@ jobs:
       tag: ${{ steps.build-image.outputs.tag }}
       image_name: ${{ steps.build-image.outputs.image_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         if: ${{ inputs.node-version-file }}
         with:
