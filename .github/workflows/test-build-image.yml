@@ -9,7 +9,6 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     with:
       repo-name: jbrunton/workflows-test-server
-      buildpack: paketo-buildpacks/nodejs
       working-directory: test-server
       publish: true
       docker-username: jbrunton

@@ -7,10 +7,6 @@ on:
         description: The name of the Docker repo
         required: true
         type: string
-      buildpack:
-        description: The buildpack to use
-        required: true
-        type: string
       tag:
         description: If no tag is given, it defaults to a name based on the branch and git sha (e.g. `my-branch-a1b2c3d`)
         required: false
@@ -89,16 +85,11 @@ jobs:
           IMAGE_NAME=$REPO_NAME:$TAG
 
           args=(
-            --builder paketobuildpacks/builder-jammy-base
-            --buildpack $BUILDPACK
-            --buildpack gcr.io/paketo-buildpacks/image-labels
-            --env BP_OCI_REVISION=$GIT_COMMIT
-            --env BP_OCI_VERSION=$GIT_BRANCH
+            --builder gcr.io/buildpacks/builder
           )
 
           if [[ $PUBLISH == 'true' ]]; then
             if [[ -n $CACHE_IMAGE ]]; then
-              pack config trusted-builders add $BUILDPACK
               args+=(--cache-image $CACHE_IMAGE)
             fi
             args+=(--publish)
@@ -112,6 +103,5 @@ jobs:
         env:
           REPO_NAME: ${{ inputs.repo-name }}
           TAG: ${{ inputs.tag }}
-          BUILDPACK: ${{ inputs.buildpack }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
