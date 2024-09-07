@@ -11,6 +11,10 @@ on:
         description: If no tag is given, it defaults to a name based on the branch and git sha (e.g. `my-branch-a1b2c3d`)
         required: false
         type: string
+      additional_tags:
+        description: Any additional tags to push the image to.
+        required: false
+        type: string
       working-directory:
         description: The directory from which to run prepare commands. Also used as the build directory unless `build-directory` is also specified.
         required: false
@@ -92,6 +96,11 @@ jobs:
             if [[ -n $CACHE_IMAGE ]]; then
               args+=(--cache-image $CACHE_IMAGE)
             fi
+
+            if [[ -n $ADDITIONAL_TAGS ]]; then
+              args+=(--tags $ADDITIONAL_TAGS)
+            fi
+
             args+=(--publish)
           fi
 
@@ -105,3 +114,4 @@ jobs:
           TAG: ${{ inputs.tag }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
+          ADDITIONAL_TAGS: ${{ inputs.ADDITIONAL_TAGS }}
