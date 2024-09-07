@@ -1,0 +1,12 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  run-build-image:
+    uses: ./.github/workflows/tag-release.yml
+    with:
+      user-name: jbrunton-ci-minion
+      user-email: jbrunton-ci-minion@outlook.com
