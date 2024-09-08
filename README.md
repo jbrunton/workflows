@@ -42,3 +42,9 @@ jobs:
 ```
 
 See the [workflow definition](https://github.com/jbrunton/workflows/blob/main/.github/workflows/tag-release.yml) for more details on the inputs and outputs.
+
+## Custom builder run image
+
+This repo also provides a custom runtime image for the google-22 builder stack: `jbrunton/run-google-22`.
+
+This is simply the Google image with curl included, in order to assist with health checks.
