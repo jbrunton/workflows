@@ -1,0 +1,24 @@
+name: build-run-image
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Login
+        run: echo "$DOCKER_ACCESS_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        env:
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          DOCKER_USERNAME: jbrunton
+      - name: build image
+        env:
+          IMAGE_NAME: jbrunton/run-google-22
+          PUSH: github.ref == 'refs/heads/main'
+        run: |
+          docker build -t $IMAGE_NAME -f run.Dockerfile .
+          if [[ $PUBLISH == 'true' ]]; then
+            docker push $IMAGE_NAME
+          fi
