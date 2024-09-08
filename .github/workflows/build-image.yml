@@ -84,7 +84,7 @@ jobs:
         id: build-image
         run: |
           if [[ -n $RUN_DOCKERFILE ]]; then
-            docker build -t $RUN_IMAGE -f run.Dockerfile
+            docker build -t $RUN_IMAGE -f run.Dockerfile .
           fi
         
           GIT_COMMIT=$(git rev-parse --short HEAD)
