@@ -40,6 +40,10 @@ on:
         description: If you wish to pin a node version, the file it's specified in.
         required: false
         type: string
+      run-image:
+        description: Custom run image to pass to the builder
+        required: false
+        type: string
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
@@ -53,7 +57,6 @@ on:
         value: ${{ jobs.build.outputs.image_name }}
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -95,6 +98,10 @@ jobs:
             args+=(--publish)
           fi
 
+          if [[ -n $RUN_IMAGE ]]; then
+            args+=(--run-image $RUN_IMAGE)
+          fi
+
           pack build $IMAGE_NAME "${args[@]}"
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
@@ -105,3 +112,4 @@ jobs:
           TAG: ${{ inputs.tag }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
+          RUN_IMAGE: ${{ inputs.run-image }}

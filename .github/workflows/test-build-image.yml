@@ -4,7 +4,6 @@ on:
   push:
 
 jobs:
-
   run-build-image:
     uses: ./.github/workflows/build-image.yml
     with:
@@ -13,6 +12,7 @@ jobs:
       publish: true
       docker-username: jbrunton
       cache-image: jbrunton/workflows-test-server-cache-image:latest
+      run-image: jbrunton/run-google-22
     secrets:
       docker-access-token: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
@@ -29,7 +29,7 @@ jobs:
           npx wait-on http://localhost:3000
 
           RESPONSE=$(curl http://localhost:3000)
-          
+
           if [ "$RESPONSE" = "Hello, World!" ]; then
             echo "Received expected output from test-server"
           else
