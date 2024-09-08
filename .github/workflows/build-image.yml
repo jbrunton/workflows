@@ -40,8 +40,8 @@ on:
         description: If you wish to pin a node version, the file it's specified in.
         required: false
         type: string
-      run-dockerfile:
-        description: Specify a run.Dockerfile to customise the run image
+      run-image:
+        description: Custom run image to pass to the builder
         required: false
         type: string
     secrets:
@@ -57,7 +57,6 @@ on:
         value: ${{ jobs.build.outputs.image_name }}
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -83,10 +82,6 @@ jobs:
       - name: Build Image
         id: build-image
         run: |
-          if [[ -n $RUN_DOCKERFILE ]]; then
-            docker build -t $RUN_IMAGE -f run.Dockerfile .
-          fi
-        
           GIT_COMMIT=$(git rev-parse --short HEAD)
           GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           TAG=${TAG:-"$GIT_BRANCH-$GIT_COMMIT"}
@@ -103,7 +98,7 @@ jobs:
             args+=(--publish)
           fi
 
-          if [[ -n $RUN_DOCKERFILE ]]; then
+          if [[ -n $RUN_IMAGE ]]; then
             args+=(--run-image $RUN_IMAGE)
           fi
 
@@ -117,5 +112,4 @@ jobs:
           TAG: ${{ inputs.tag }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
-          RUN_DOCKERFILE: ${{ inputs.run-dockerfile }}
-          RUN_IMAGE: "${{ inputs.repo-name }}-run"
+          RUN_IMAGE: ${{ inputs.run-image }}
