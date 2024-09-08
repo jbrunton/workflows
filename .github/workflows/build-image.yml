@@ -84,7 +84,7 @@ jobs:
         id: build-image
         run: |
           if [[ -n $RUN_DOCKERFILE ]]; then
-            docker build -t run-image -f run.Dockerfile .
+            docker build -t $RUN_IMAGE -f run.Dockerfile .
           fi
         
           GIT_COMMIT=$(git rev-parse --short HEAD)
@@ -104,7 +104,7 @@ jobs:
           fi
 
           if [[ -n $RUN_DOCKERFILE ]]; then
-            args+=(--run-image run-image)
+            args+=(--run-image $RUN_IMAGE)
           fi
 
           pack build $IMAGE_NAME "${args[@]}"
@@ -118,3 +118,4 @@ jobs:
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
           RUN_DOCKERFILE: ${{ inputs.run-dockerfile }}
+          RUN_IMAGE: "${{ inputs.repo-name }}-run"
