@@ -1,10 +1,10 @@
-name: build-run-image
+name: build-run-google-22
 
 on:
   push:
 
 jobs:
-  build:
+  build-run-google-22:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +16,7 @@ jobs:
       - name: build image
         env:
           IMAGE_NAME: jbrunton/run-google-22
-          PUSH: github.ref == 'refs/heads/main'
+          PUBLISH: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker build -t $IMAGE_NAME -f run.Dockerfile .
           if [[ $PUBLISH == 'true' ]]; then
