@@ -44,6 +44,10 @@ on:
         description: Custom run image to pass to the builder
         required: false
         type: string
+      skip-build:
+        description: Skips the build, simply outputs the pending new image tag
+        required: false
+        type: boolean
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
@@ -102,7 +106,11 @@ jobs:
             args+=(--run-image $RUN_IMAGE)
           fi
 
-          pack build $IMAGE_NAME "${args[@]}"
+          if [[ -n $SKIP_BUILD ]]; then
+            echo "Skipping build because skip-build=true"
+          else
+            pack build $IMAGE_NAME "${args[@]}"
+          fi
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
@@ -112,4 +120,5 @@ jobs:
           TAG: ${{ inputs.tag }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
+          SKIP_BUILD: ${{ inputs.skip-build }}
           RUN_IMAGE: ${{ inputs.run-image }}
