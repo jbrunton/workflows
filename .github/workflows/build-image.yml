@@ -44,6 +44,11 @@ on:
         description: Custom run image to pass to the builder
         required: false
         type: string
+      skip-build:
+        description: Skips the build, simply outputs the pending new image tag
+        required: false
+        type: boolean
+        default: false
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
@@ -77,6 +82,7 @@ jobs:
           DOCKER_USERNAME: ${{ inputs.docker-username }}
       - uses: buildpacks/github-actions/setup-pack@v4.9.0
       - name: Prepare Build
+        if: ${{ inputs.skip-build != 'true' }}
         run: ${{ inputs.prepare-cmd }}
         working-directory: ${{ inputs.working-directory }}
       - name: Build Image
@@ -86,6 +92,8 @@ jobs:
           GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           TAG=${TAG:-"$GIT_BRANCH-$GIT_COMMIT"}
           IMAGE_NAME=$REPO_NAME:$TAG
+
+          printf "Inputs:\n  repo-name=$REPO_NAME\n  TAG=$TAG\n  cache-image=$CACHE_IMAGE\n  publish=$PUBLISH\n  skip-build=$SKIP_BUILD\n  run-image=$RUN_IMAGE\n"
 
           args=(
             --builder gcr.io/buildpacks/builder
@@ -102,7 +110,11 @@ jobs:
             args+=(--run-image $RUN_IMAGE)
           fi
 
-          pack build $IMAGE_NAME "${args[@]}"
+          if [[ $SKIP_BUILD == 'true' ]]; then
+            echo "Skipping build because skip-build=true"
+          else
+            pack build $IMAGE_NAME "${args[@]}"
+          fi
 
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
@@ -112,4 +124,5 @@ jobs:
           TAG: ${{ inputs.tag }}
           CACHE_IMAGE: ${{ inputs.cache-image }}
           PUBLISH: ${{ inputs.publish }}
+          SKIP_BUILD: ${{ inputs.skip-build }}
           RUN_IMAGE: ${{ inputs.run-image }}
