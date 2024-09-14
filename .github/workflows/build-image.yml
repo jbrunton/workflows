@@ -109,7 +109,7 @@ jobs:
             args+=(--run-image $RUN_IMAGE)
           fi
 
-          if [[ -n $SKIP_BUILD ]]; then
+          if [[ $SKIP_BUILD == 'true' ]]; then
             echo "Skipping build because skip-build=true"
           else
             pack build $IMAGE_NAME "${args[@]}"
