@@ -48,6 +48,7 @@ on:
         description: Skips the build, simply outputs the pending new image tag
         required: false
         type: boolean
+        default: false
     secrets:
       docker-access-token:
         description: The access token to sign into the Docker registry with
