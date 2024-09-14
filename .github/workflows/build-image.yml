@@ -92,7 +92,7 @@ jobs:
           TAG=${TAG:-"$GIT_BRANCH-$GIT_COMMIT"}
           IMAGE_NAME=$REPO_NAME:$TAG
 
-          printf "Inputs:\n  repo-name=$REPO_NAME\n  TAG=$TAG\n  cache-image=$CACHE_IMAGE\n  publish=$PUBLISH\n  skip-build=$SKIP_BUILD\n  run-image=$RUN_IMAGE"
+          printf "Inputs:\n  repo-name=$REPO_NAME\n  TAG=$TAG\n  cache-image=$CACHE_IMAGE\n  publish=$PUBLISH\n  skip-build=$SKIP_BUILD\n  run-image=$RUN_IMAGE\n"
 
           args=(
             --builder gcr.io/buildpacks/builder
