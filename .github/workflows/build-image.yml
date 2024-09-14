@@ -82,6 +82,7 @@ jobs:
           DOCKER_USERNAME: ${{ inputs.docker-username }}
       - uses: buildpacks/github-actions/setup-pack@v4.9.0
       - name: Prepare Build
+        if: ${{ inputs.skip-build != 'true' }}
         run: ${{ inputs.prepare-cmd }}
         working-directory: ${{ inputs.working-directory }}
       - name: Build Image
